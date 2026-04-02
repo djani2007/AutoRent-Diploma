@@ -1,0 +1,104 @@
+@{
+    ViewData["Title"] = "Потвърждение на резервация";
+    var car = ViewBag.Car as Car;
+    var startDate = (DateTime)ViewBag.StartDate;
+    var endDate = (DateTime)ViewBag.EndDate;
+    var totalPrice = (decimal)ViewBag.TotalPrice;
+    var totalDays = (int)ViewBag.TotalDays;
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0"><i class="bi bi-check-circle"></i> Потвърждение на резервация</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <img src="@(car.ImageUrl ?? "https://via.placeholder.com/300x200?text=No+Image")"
+                                 class="img-fluid rounded" alt="@car.FullName">
+                        </div>
+                        <div class="col-md-8">
+                            <h4>@car.Brand @car.Model</h4>
+                            <p class="text-muted">@car.BodyType | @car.TransmissionType</p>
+
+                            <ul class="list-unstyled">
+                                @if (car.HasPaidVignette)
+                                {
+                                    <li><i class="bi bi-check text-success"></i> Платена винетка</li>
+                                }
+                                @if (car.HasUnlimitedMileage)
+                                {
+                                    <li><i class="bi bi-check text-success"></i> Неограничен пробег</li>
+                                }
+                                @if (car.VatIncluded)
+                                {
+                                    <li><i class="bi bi-check text-success"></i> Включен ДДС 20%</li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Детайли на резервацията</h5>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><strong>Начална дата:</strong></td>
+                                    <td>@startDate.ToString("dd.MM.yyyy")</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Крайна дата:</strong></td>
+                                    <td>@endDate.ToString("dd.MM.yyyy")</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Брой дни:</strong></td>
+                                    <td>@totalDays</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Цена на ден:</strong></td>
+                                    <td>@car.PricePerDay.ToString("N2") лв.</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <h5>Обща сума</h5>
+                                    <p class="display-4 text-primary mb-0">@totalPrice.ToString("N2") лв.</p>
+                                    <small class="text-muted">Включен ДДС</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <form asp-action="Create" method="post">
+                        <input type="hidden" name="carId" value="@car.Id" />
+                        <input type="hidden" name="startDate" value="@startDate.ToString("yyyy-MM-dd")" />
+                        <input type="hidden" name="endDate" value="@endDate.ToString("yyyy-MM-dd")" />
+
+                        <div class="mb-3">
+                            <label class="form-label">Бележки (незадължително)</label>
+                            <textarea name="notes" class="form-control" rows="2" placeholder="Допълнителни изисквания..."></textarea>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-check-circle"></i> Потвърди резервацията
+                            </button>
+                            <a asp-controller="Cars" asp-action="Rent" asp-route-id="@car.Id" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Назад
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

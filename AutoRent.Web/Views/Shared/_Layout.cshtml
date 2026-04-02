@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - AutoRent</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">
+                <i class="bi bi-car-front"></i> AUTORENT
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Home" asp-action="Index">Начало</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Cars" asp-action="Index">Автомобили</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Home" asp-action="About">За нас</a>
+                    </li>
+                    @if (!User.IsInRole("Admin"))
+
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Home" asp-action="Contact">Контакти</a>
+                        </li>
+                    }
+                </ul>
+                <partial name="_LoginPartial" />
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show m-3" role="alert">
+                @TempData["Success"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show m-3" role="alert">
+                @TempData["Error"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+        @RenderBody()
+    </main>
+
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <!-- Лого / За нас -->
+                <div class="col-md-4">
+                    <h5 class="text-white">AUTORENT</h5>
+                    <p class="text-white">
+                        Надежден партньор за коли под наем.
+                    </p>
+                </div>
+
+                <!-- Бързи връзки -->
+                <div class="col-md-4">
+                    <h5 class="text-white">Бързи връзки</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="/" class="text-white text-decoration-none">Начало</a></li>
+                        <li><a href="/Cars" class="text-white text-decoration-none">Автомобили</a></li>
+                        <li><a href="/Home/About" class="text-white text-decoration-none">За нас</a></li>
+                        <li><a href="/Home/Contact" class="text-white text-decoration-none">Контакти</a></li>
+                    </ul>
+                </div>
+
+                <!-- Контакти -->
+                <div class="col-md-4">
+                    <h5 class="text-white">Контакти</h5>
+                    <p class="text-white">
+                        info@autorent.bg<br>
+                        support@autorent.bg<br>
+                        admin@autorent.com
+                    </p>
+                    <p class="text-white">
+                        +359 897 411 494<br>
+                       
+                    </p>
+                </div>
+            </div>
+            <hr class="my-3">
+            <div class="text-center text-muted">
+                &copy; @DateTime.Now.Year AUTORENT. Всички права запазени.
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

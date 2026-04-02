@@ -1,0 +1,79 @@
+@model IEnumerable<Car>
+@{
+    ViewData["Title"] = "Управление на автомобили";
+}
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="bi bi-car-front"></i> Управление на автомобили</h1>
+        <a asp-action="CreateCar" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Добави автомобил
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Снимка</th>
+                            <th>Марка</th>
+                            <th>Модел</th>
+                            <th>Каросерия</th>
+                            <th>Скорости</th>
+                            <th>Цена/ден</th>
+                            <th>Статус</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var car in Model)
+                        {
+                            <tr>
+                                <td>@car.Id</td>
+                                <td>
+                                    <img src="@(car.ImageUrl ?? "https://via.placeholder.com/60x40?text=No")"
+                                         class="rounded" style="width: 60px; height: 40px; object-fit: cover;">
+                                </td>
+                                <td>@car.Brand</td>
+                                <td>@car.Model</td>
+                                <td>@car.BodyType</td>
+                                <td>@car.TransmissionType</td>
+                                <td>@car.PricePerDay.ToString("N2") лв.</td>
+                                <td>
+                                    @if (car.IsAvailable)
+                                    {
+                                        <span class="badge bg-success">Наличен</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Не е наличен</span>
+                                    }
+                                </td>
+                                <td>
+                                    <a asp-action="EditCar" asp-route-id="@car.Id" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <form asp-action="DeleteCar" asp-route-id="@car.Id" method="post" class="d-inline"
+                                          onsubmit="return confirm('Сигурни ли сте, че искате да изтриете този автомобил?');">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Назад към панела
+        </a>
+    </div>
+</div>

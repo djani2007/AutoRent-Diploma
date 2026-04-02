@@ -1,0 +1,130 @@
+@model Car
+@{
+    ViewData["Title"] = Model.FullName;
+}
+@if (TempData["Error"] != null)
+
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+
+@if (TempData["Success"] != null)
+
+{
+    <div class="alert alert-success">
+        @TempData["Success"]
+    </div>
+}
+<div class="container py-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Начало</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Cars" asp-action="Index">Автомобили</a></li>
+            <li class="breadcrumb-item active">@Model.FullName</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <img src="@(Model.ImageUrl ?? "https://via.placeholder.com/600x400?text=No+Image")"
+                 class="img-fluid rounded shadow" alt="@Model.FullName">
+        </div>
+        <div class="col-lg-6">
+            <h1>@Model.Brand @Model.Model</h1>
+            <p class="text-muted">@Model.Year | @Model.FuelType | @Model.Seats места</p>
+
+            <div class="car-specs mt-4">
+                <h5>Характеристики</h5>
+                <table class="table">
+                    <tr>
+                        <th><i class="bi bi-car-front text-primary"></i> Марка</th>
+                        <td>@Model.Brand</td>
+                    </tr>
+                    <tr>
+                        <th><i class="bi bi-tag text-primary"></i> Модел</th>
+                        <td>@Model.Model</td>
+                    </tr>
+                    <tr>
+                        <th><i class="bi bi-calendar text-primary"></i> Година</th>
+                        <td>@Model.Year</td>
+                    </tr>
+                    <tr>
+                        <th><i class="bi bi-box text-primary"></i> Тип каросерия</th>
+                        <td>@Model.BodyType</td>
+                    </tr>
+                    <tr>
+                        <th><i class="bi bi-gear text-primary"></i> Скоростна кутия</th>
+                        <td>@(Model.TransmissionType == "Automatic" ? "Автоматична" : "Механична")</td>
+                    </tr>
+                    <tr>
+                        <th><i class="bi bi-fuel-pump text-primary"></i> Гориво</th>
+                        <td>@Model.FuelType</td>
+                    </tr>
+                    <tr>
+                        <th><i class="bi bi-people text-primary"></i> Места</th>
+                        <td>@Model.Seats</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="car-features mt-4">
+                <h5>Включени услуги</h5>
+                <ul class="list-unstyled">
+                    @if (Model.HasPaidVignette)
+                    {
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            <strong>Платена винетка</strong>
+                        </li>
+                    }
+                    @if (Model.HasUnlimitedMileage)
+                    {
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            <strong>Неограничен пробег</strong>
+                        </li>
+                    }
+                    @if (Model.VatIncluded)
+                    {
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            <strong>Включен ДДС 20%</strong>
+                        </li>
+                    }
+                </ul>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.Description))
+            {
+                <div class="car-description mt-4">
+                    <h5>Описание</h5>
+                    <p>@Model.Description</p>
+                </div>
+            }
+
+            <div class="card bg-light mt-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="h2 text-primary">@Model.PricePerDay.ToString("N2") лв.</span>
+                            <span class="text-muted">/ ден</span>
+                        </div>
+                        @if (Model.IsAvailable)
+                        {
+                            <a asp-controller="Cars" asp-action="Rent" asp-route-id="@Model.Id" class="btn btn-primary btn-lg">
+                                <i class="bi bi-calendar-plus"></i> Наеми сега
+                            
+                            </a>
+                        }
+                        else
+                        {
+                            <button class="btn btn-secondary btn-lg" disabled>Не е наличен</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

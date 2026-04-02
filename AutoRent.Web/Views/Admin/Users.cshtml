@@ -1,0 +1,107 @@
+@model IEnumerable<ApplicationUser>
+@{
+    ViewData["Title"] = "Управление на потребители";
+}
+
+<div class="container py-5">
+    <h1 class="mb-4"><i class="bi bi-people"></i> Управление на потребители</h1>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Име</th>
+                            <th>Email</th>
+                            <th>Телефон</th>
+                            <th>Роля</th>
+                            <th>Статус</th>
+                            <th>Регистриран</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model)
+
+                        {
+                            <tr>
+                                <td>@user.Id</td>
+                                <td>@(string.IsNullOrWhiteSpace(user.FullName) ? "-" : user.FullName)</td>
+                                <td>@user.Email</td>
+                                <td>@(user.PhoneNumber ?? "-")</td>
+                                <td>
+                                    @if (user.Role == "Admin")
+
+                                    {
+                                        <span class="badge bg-danger">Admin</span>
+                                    }
+
+                                    else
+
+                                    {
+                                        <span class="badge bg-primary">Client</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (user.IsActive)
+
+                                    {
+                                        <span class="badge bg-success">Активен</span>
+                                    }
+
+                                    else
+
+                                    {
+                                        <span class="badge bg-secondary">Неактивен</span>
+                                    }
+                                </td>
+                                <td>@user.CreatedAt.ToString("dd.MM.yyyy")</td>
+                                <td>
+                                    <a asp-action="UserDetails" asp-route-id="@user.Id" class="btn btn-sm btn-outline-info me-1">
+                                        <i class="bi bi-info-circle"></i> Инфо
+                                    </a>
+
+                                    @if (user.Role != "Admin")
+
+                                    {
+                                        @if (user.IsActive)
+
+                                        {
+                                            <form asp-action="BlockUser" asp-route-id="@user.Id" method="post" class="d-inline"
+                                                  onsubmit="return confirm('Сигурни ли сте, че искате да блокирате този потребител?');">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-sm btn-outline-warning">
+                                                    <i class="bi bi-person-x"></i> Блокирай
+                                                </button>
+                                            </form>
+                                        }
+
+                                        else
+
+                                        {
+                                            <form asp-action="UnblockUser" asp-route-id="@user.Id" method="post" class="d-inline"
+                                                  onsubmit="return confirm('Сигурни ли сте, че искате да отблокирате този потребител?');">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-sm btn-outline-success">
+                                                    <i class="bi bi-person-check"></i> Отблокирай
+                                                </button>
+                                            </form>
+                                        }
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Назад към панела
+        </a>
+    </div>
+</div>

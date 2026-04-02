@@ -1,0 +1,76 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@using AutoRent.Core.Entities
+@using AutoRent.Infrastructure.Data
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@inject AppDbContext DbContext
+
+<ul class="navbar-nav">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        var currentUser = await UserManager.GetUserAsync(User);
+        var isAdmin = currentUser != null && await UserManager.IsInRoleAsync(currentUser, "Admin");
+        var unreadMessagesCount = isAdmin
+        ? await DbContext.ContactMessages.CountAsync(x => !x.IsRead)
+        : 0;
+
+        if (isAdmin)
+        {
+            <li class="nav-item">
+                <a class="nav-link text-warning" asp-controller="Admin" asp-action="Index">
+                    <i class="bi bi-gear"></i> Админ панел
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link position-relative" asp-controller="Admin" asp-action="Messages">
+                    <i class="bi bi-envelope"></i> Съобщения
+                    @if (unreadMessagesCount > 0)
+                    {
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            @unreadMessagesCount
+                        </span>
+                    }
+                </a>
+            </li>
+        }
+        else
+        {
+            <li class="nav-item">
+                <a class="nav-link" asp-controller="Rentals" asp-action="Index">
+                    <i class="bi bi-calendar-check"></i> Моите наеми
+                </a>
+            </li>
+        }
+
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-person-circle"></i> @(currentUser?.Email ?? User.Identity?.Name)
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                <li>
+                    <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">Профил</a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <form asp-area="Identity"
+                          asp-page="/Account/Logout"
+                          asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })"
+                          method="post" class="m-0">
+                        <button type="submit" class="dropdown-item">Изход</button>
+                    </form>
+                </li>
+            </ul>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">Вход</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-controller="Account" asp-action="Register">Регистрация</a>
+        </li>
+    }
+</ul>

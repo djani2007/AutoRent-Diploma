@@ -1,0 +1,90 @@
+@model IEnumerable<Car>
+@{
+    ViewData["Title"] = "Начало";
+}
+
+<!-- Hero Section -->
+<section class="hero-section bg-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold">Наемете автомобил лесно и бързо</h1>
+                <p class="lead">Открийте нашия богат избор от автомобили под наем на достъпни цени. Платена винетка, неограничен пробег и включен ДДС.</p>
+                <a asp-controller="Cars" asp-action="Index" class="btn btn-light btn-lg mt-3">
+                    <i class="bi bi-search"></i> Разгледай автомобилите
+                </a>
+            </div>
+            <div class="col-lg-6 text-center">
+                <img src="https://images.unsplash.com/photo-1485291571150-772bcfc10da5?w=600" alt="Luxury Car" class="img-fluid rounded shadow">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-4 mb-4">
+                <div class="p-4">
+                    <i class="bi bi-shield-check display-4 text-success"></i>
+                    <h4 class="mt-3">Платена винетка</h4>
+                    <p class="text-muted">Всички наши автомобили разполагат с валидна винетка.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="p-4">
+                    <i class="bi bi-speedometer2 display-4 text-primary"></i>
+                    <h4 class="mt-3">Неограничен пробег</h4>
+                    <p class="text-muted">Пътувайте без лимит на километрите.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="p-4">
+                    <i class="bi bi-percent display-4 text-warning"></i>
+                    <h4 class="mt-3">Включен ДДС 20%</h4>
+                    <p class="text-muted">Цената включва данък добавена стойност.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Cars Section -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Избрани автомобили</h2>
+        <div class="row">
+            @foreach (var car in Model)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <img src="@(car.ImageUrl ?? "https://via.placeholder.com/400x250?text=No+Image")"
+                             class="card-img-top" alt="@car.FullName" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <h5 class="card-title">@car.Brand @car.Model</h5>
+                            <p class="text-muted mb-2">
+                                <span class="badge bg-secondary">@car.BodyType</span>
+                                <span class="badge bg-info">@car.TransmissionType</span>
+                            </p>
+                            <p class="card-text">
+                                <span class="h4 text-primary">@car.PricePerDay.ToString("N2") лв.</span>
+                                <small class="text-muted">/ ден</small>
+                            </p>
+                        </div>
+                        <div class="card-footer bg-white border-top-0">
+                            <a asp-controller="Cars" asp-action="Details" asp-route-id="@car.Id" class="btn btn-primary w-100">
+                                Детайли
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="text-center mt-4">
+            <a asp-controller="Cars" asp-action="Index" class="btn btn-outline-primary btn-lg">
+                Виж всички автомобили <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</section>

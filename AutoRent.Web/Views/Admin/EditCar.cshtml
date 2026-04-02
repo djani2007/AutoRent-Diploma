@@ -1,0 +1,119 @@
+@model AutoRent.Web.ViewModels.CarEditViewModel
+
+@{
+    ViewData["Title"] = "Редактирай автомобил";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-warning">
+            <h2 class="mb-0">Редактирай автомобил</h2>
+        </div>
+        <div class="card-body">
+            <form asp-controller="Admin" asp-action="EditCarManual" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="Id" value="@Model.Id" />
+
+                <div asp-validation-summary="All" class="alert alert-danger"></div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Марка</label>
+                        <input type="text" name="Brand" value="@Model.Brand" class="form-control" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Модел</label>
+                        <input type="text" name="Model" value="@Model.Model" class="form-control" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Тип каросерия</label>
+                        <select name="BodyType" class="form-select">
+                            <option value="">-- Избери --</option>
+                            <option value="Sedan" selected="@(Model.BodyType == "Sedan")">Sedan</option>
+                            <option value="SUV" selected="@(Model.BodyType == "SUV")">SUV</option>
+                            <option value="Hatchback" selected="@(Model.BodyType == "Hatchback")">Hatchback</option>
+                            <option value="Coupe" selected="@(Model.BodyType == "Coupe")">Coupe</option>
+                            <option value="Combi" selected="@(Model.BodyType == "Combi")">Combi</option>
+                            <option value="Van" selected="@(Model.BodyType == "Van")">Van</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Скоростна кутия</label>
+                        <select name="TransmissionType" class="form-select">
+                            <option value="">-- Избери --</option>
+                            <option value="Автоматична" selected="@(Model.TransmissionType == "Автоматична")">Автоматична</option>
+                            <option value="Ръчна" selected="@(Model.TransmissionType == "Ръчна")">Ръчна</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Година</label>
+                        <input type="number" name="Year" value="@Model.Year" class="form-control" />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Гориво</label>
+                        <select name="FuelType" class="form-select">
+                            <option value="">-- Избери --</option>
+                            <option value="Бензин" selected="@(Model.FuelType == "Бензин")">Бензин</option>
+                            <option value="Дизел" selected="@(Model.FuelType == "Дизел")">Дизел</option>
+                            <option value="Хибрид" selected="@(Model.FuelType == "Хибрид")">Хибрид</option>
+                            <option value="Електрически" selected="@(Model.FuelType == "Електрически")">Електрически</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Места</label>
+                        <input type="number" name="Seats" value="@Model.Seats" class="form-control" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Цена на ден (лв.)</label>
+                        <input type="number" step="0.01" name="PricePerDay" value="@Model.PricePerDay" class="form-control" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">URL на снимка</label>
+                        <input type="text" name="ImageUrl" value="@Model.ImageUrl" class="form-control" />
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">Описание</label>
+                        <textarea name="Description" class="form-control" rows="4">@Model.Description</textarea>
+                    </div>
+
+                    <div class="col-md-3 form-check">
+                        <input type="checkbox" name="IsAvailable" value="true" class="form-check-input" @(Model.IsAvailable ? "checked" : "") />
+                        <input type="hidden" name="IsAvailable" value="false" />
+                        <label class="form-check-label">Наличен</label>
+                    </div>
+
+                    <div class="col-md-3 form-check">
+                        <input type="checkbox" name="HasPaidVignette" value="true" class="form-check-input" @(Model.HasPaidVignette ? "checked" : "") />
+                        <input type="hidden" name="HasPaidVignette" value="false" />
+                        <label class="form-check-label">Платена винетка</label>
+                    </div>
+
+                    <div class="col-md-3 form-check">
+                        <input type="checkbox" name="HasUnlimitedMileage" value="true" class="form-check-input" @(Model.HasUnlimitedMileage ? "checked" : "") />
+                        <input type="hidden" name="HasUnlimitedMileage" value="false" />
+                        <label class="form-check-label">Неограничен пробег</label>
+                    </div>
+
+                    <div class="col-md-3 form-check">
+                        <input type="checkbox" name="VatIncluded" value="true" class="form-check-input" @(Model.VatIncluded ? "checked" : "") />
+                        <input type="hidden" name="VatIncluded" value="false" />
+                        <label class="form-check-label">Включен ДДС</label>
+                    </div>
+
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-warning w-100">Запази промените</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

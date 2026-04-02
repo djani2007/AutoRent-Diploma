@@ -1,0 +1,95 @@
+@model Rental
+@{
+    ViewData["Title"] = "Детайли на резервация #" + Model.Id;
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0"><i class="bi bi-calendar-check"></i> Резервация #@Model.Id</h4>
+                    @switch (Model.Status)
+                    {
+                        case "Pending":
+                            <span class="badge bg-warning fs-6">В изчакване</span>
+                            break;
+                        case "Active":
+                            <span class="badge bg-success fs-6">Активен</span>
+                            break;
+                        case "Completed":
+                            <span class="badge bg-secondary fs-6">Завършен</span>
+                            break;
+                        case "Cancelled":
+                            <span class="badge bg-danger fs-6">Отказан</span>
+                            break;
+                    }
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <img src="@(Model.Car.ImageUrl ?? "https://via.placeholder.com/300x200?text=No+Image")"
+                                 class="img-fluid rounded" alt="@Model.Car.FullName">
+                        </div>
+                        <div class="col-md-8">
+                            <h4>@Model.Car.Brand @Model.Car.Model</h4>
+                            <p class="text-muted">@Model.Car.BodyType | @Model.Car.TransmissionType</p>
+                            <a asp-controller="Cars" asp-action="Details" asp-route-id="@Model.CarId" class="btn btn-sm btn-outline-primary">
+                                Виж автомобила
+                            </a>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Период на наемане</h5>
+                            <p>
+                                <i class="bi bi-calendar3 text-primary"></i>
+                                <strong>@Model.StartDate.ToString("dd.MM.yyyy")</strong>
+                                <i class="bi bi-arrow-right"></i>
+                                <strong>@Model.EndDate.ToString("dd.MM.yyyy")</strong>
+                            </p>
+                            <p><strong>Общо дни:</strong> @Model.TotalDays</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Финансова информация</h5>
+                            <p><strong>Цена на ден:</strong> @Model.Car.PricePerDay.ToString("N2") лв.</p>
+                            <p class="h4 text-primary"><strong>Общо:</strong> @Model.TotalPrice.ToString("N2") лв.</p>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.Notes))
+                    {
+                        <hr />
+                        <h5>Бележки</h5>
+                        <p>@Model.Notes</p>
+                    }
+
+                    <hr />
+
+                    <p class="text-muted mb-0">
+                        <small>Резервацията е създадена на @Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</small>
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between">
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Към моите наеми
+                        </a>
+                        @if (Model.Status == "Pending")
+                        {
+                            <form asp-action="Cancel" asp-route-id="@Model.Id" method="post"
+                                  onsubmit="return confirm('Сигурни ли сте, че искате да откажете резервацията?');">
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="bi bi-x-circle"></i> Откажи резервацията
+                                </button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
