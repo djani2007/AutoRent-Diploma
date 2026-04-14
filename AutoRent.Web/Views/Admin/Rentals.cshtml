@@ -55,38 +55,35 @@
                                     }
                                 </td>
                                 <td>
-                                    <div class="btn-group btn-group-sm">
-                                        @if (rental.Status == "Pending")
-                                        {
+                                    @if (rental.Status == "Pending")
+
+                                    {
+                                        <div class="btn-group btn-group-sm">
                                             <form asp-action="UpdateRentalStatus" method="post" class="d-inline">
+                                                @Html.AntiForgeryToken()
                                                 <input type="hidden" name="id" value="@rental.Id" />
                                                 <input type="hidden" name="status" value="Active" />
                                                 <button type="submit" class="btn btn-success" title="Активирай">
                                                     <i class="bi bi-check"></i>
                                                 </button>
                                             </form>
-                                        }
-                                        @if (rental.Status == "Active")
-                                        {
+
                                             <form asp-action="UpdateRentalStatus" method="post" class="d-inline">
-                                                <input type="hidden" name="id" value="@rental.Id" />
-                                                <input type="hidden" name="status" value="Completed" />
-                                                <button type="submit" class="btn btn-secondary" title="Завърши">
-                                                    <i class="bi bi-check-circle"></i>
-                                                </button>
-                                            </form>
-                                        }
-                                        @if (rental.Status != "Cancelled" && rental.Status != "Completed")
-                                        {
-                                            <form asp-action="UpdateRentalStatus" method="post" class="d-inline">
+                                                @Html.AntiForgeryToken()
                                                 <input type="hidden" name="id" value="@rental.Id" />
                                                 <input type="hidden" name="status" value="Cancelled" />
                                                 <button type="submit" class="btn btn-danger" title="Откажи">
                                                     <i class="bi bi-x"></i>
                                                 </button>
                                             </form>
-                                        }
-                                    </div>
+                                        </div>
+                                    }
+
+                                    else
+
+                                    {
+                                        <span class="text-muted">—</span>
+                                    }
                                 </td>
                             </tr>
                         }
