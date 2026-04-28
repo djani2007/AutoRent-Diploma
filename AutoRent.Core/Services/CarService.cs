@@ -22,6 +22,10 @@ namespace AutoRent.Core.Services
         {
             return await _carRepository.GetAvailableCarsAsync();
         }
+        public async Task<IEnumerable<Car>> GetAvailableCarsAsync(DateTime startDate, DateTime endDate)
+        {
+            return await _carRepository.GetAvailableCarsAsync(startDate, endDate);
+        }
 
         public async Task<Car?> GetCarByIdAsync(int id)
         {
@@ -104,6 +108,7 @@ namespace AutoRent.Core.Services
                 seats);
         }
 
+       
         public async Task<bool> IsCarAvailableAsync(int carId, DateTime startDate, DateTime endDate)
         {
             return await _carRepository.IsCarAvailableAsync(carId, startDate, endDate);
