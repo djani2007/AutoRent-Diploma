@@ -5,93 +5,134 @@
 
 <div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0"><i class="bi bi-person-circle"></i> Моят профил</h4>
+        <div class="col-lg-9 col-xl-8">
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                <div class="card-header bg-primary text-white py-4">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                            <i class="bi bi-person-circle display-5"></i>
+                        </div>
+                        <div>
+                            <h3 class="mb-1">Моят профил</h3>
+                            <p class="mb-0 small">Преглед и редакция на личните данни</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
+
+                <div class="card-body p-4">
+                   
                     <form asp-action="Profile" method="post">
                         <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
+                        <h5 class="mb-3 text-primary">
+                            <i class="bi bi-person-lines-fill me-1"></i> Основна информация
+                        </h5>
+
                         <div class="mb-3">
-                            <label class="form-label">Email адрес</label>
-                            <input type="email" class="form-control" value="@Model.Email" disabled />
+                            <label class="form-label">Имейл адрес</label>
+                            <input type="email" class="form-control form-control-lg bg-light" value="@Model.Email" disabled />
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label asp-for="FirstName" class="form-label">Име</label>
-                                <input asp-for="FirstName" class="form-control" />
+                                <input asp-for="FirstName" class="form-control form-control-lg bg-light" readonly />
                                 <span asp-validation-for="FirstName" class="text-danger"></span>
                             </div>
 
                             <div class="col-md-6 mb-3">
                                 <label asp-for="LastName" class="form-label">Фамилия</label>
-                                <input asp-for="LastName" class="form-control" />
+                                <input asp-for="LastName" class="form-control form-control-lg bg-light" readonly />
                                 <span asp-validation-for="LastName" class="text-danger"></span>
                             </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label asp-for="PhoneNumber" class="form-label">Телефон</label>
-                            <input asp-for="PhoneNumber" class="form-control" />
-                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="PhoneNumber" class="form-label">Телефон</label>
+                                <input asp-for="PhoneNumber" class="form-control form-control-lg" placeholder="+359..." />
+                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Член от</label>
+                                <input type="text" class="form-control form-control-lg bg-light" value="@Model.CreatedAt.ToString("dd.MM.yyyy")" disabled />
+                            </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label asp-for="Address" class="form-label">Адрес</label>
-                            <input asp-for="Address" class="form-control" />
-                            <span asp-validation-for="Address" class="text-danger"></span>
+                        <hr class="my-4" />
+
+                        <h5 class="mb-3 text-primary">
+                            <i class="bi bi-geo-alt me-1"></i> Адресна информация
+                        </h5>
+
+                        <div class="row">
+                            <div class="col-md-8 mb-3">
+                                <label asp-for="Address" class="form-label">Адрес</label>
+                                <input asp-for="Address" class="form-control form-control-lg" placeholder="Въведете адрес" />
+                                <span asp-validation-for="Address" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="City" class="form-label">Град</label>
+                                <input asp-for="City" class="form-control form-control-lg" placeholder="Град" />
+                                <span asp-validation-for="City" class="text-danger"></span>
+                            </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label asp-for="City" class="form-label">Град</label>
-                            <input asp-for="City" class="form-control" />
-                            <span asp-validation-for="City" class="text-danger"></span>
-                        </div>
+                        <hr class="my-4" />
 
-                        <div class="mb-3">
-                            <label asp-for="DriverLicenseNumber" class="form-label">Номер на шофьорска книжка</label>
-                            <input asp-for="DriverLicenseNumber" class="form-control" />
-                            <span asp-validation-for="DriverLicenseNumber" class="text-danger"></span>
+                        <h5 class="mb-3 text-primary">
+                            <i class="bi bi-card-checklist me-1"></i> Документи
+                        </h5>
+
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Име, фамилия, ЕГН и дата на раждане не могат да бъдат променяни от клиента.
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label asp-for="EGN" class="form-label">ЕГН</label>
-                                <input asp-for="EGN" class="form-control" maxlength="10" />
+                                <input asp-for="EGN" class="form-control form-control-lg bg-light" maxlength="10" readonly />
                                 <span asp-validation-for="EGN" class="text-danger"></span>
                             </div>
 
                             <div class="col-md-6 mb-3">
                                 <label asp-for="BirthDate" class="form-label">Дата на раждане</label>
-                                <input asp-for="BirthDate" type="date" class="form-control" />
+                                <input asp-for="BirthDate" type="date" class="form-control form-control-lg bg-light" readonly />
                                 <span asp-validation-for="BirthDate" class="text-danger"></span>
                             </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label asp-for="IdentityCardNumber" class="form-label">Номер на лична карта</label>
-                            <input asp-for="IdentityCardNumber" class="form-control" />
-                            <span asp-validation-for="IdentityCardNumber" class="text-danger"></span>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="IdentityCardNumber" class="form-label">Номер на лична карта</label>
+                                <input asp-for="IdentityCardNumber" class="form-control form-control-lg" placeholder="Въведете номер" />
+                                <span asp-validation-for="IdentityCardNumber" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="DriverLicenseNumber" class="form-label">Номер на шофьорска книжка</label>
+                                <input asp-for="DriverLicenseNumber" class="form-control form-control-lg" placeholder="Въведете номер" />
+                                <span asp-validation-for="DriverLicenseNumber" class="text-danger"></span>
+                            </div>
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-4">
                             <label asp-for="DriverLicenseIssueDate" class="form-label">Дата на издаване на книжка</label>
-                            <input asp-for="DriverLicenseIssueDate" type="date" class="form-control" />
+                            <input asp-for="DriverLicenseIssueDate" type="date" class="form-control form-control-lg" />
                             <span asp-validation-for="DriverLicenseIssueDate" class="text-danger"></span>
                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label">Член от</label>
-                            <input type="text" class="form-control" value="@Model.CreatedAt.ToString("dd.MM.yyyy")" disabled />
-                        </div>
-
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary">
-                                Запази промените
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-check-circle me-1"></i> Запази промените
                             </button>
+
+                            <a asp-action="ChangePassword" asp-controller="Account" class="btn btn-outline-danger btn-lg">
+                                <i class="bi bi-key me-1"></i> Смяна на парола
+                            </a>
                         </div>
                     </form>
                 </div>

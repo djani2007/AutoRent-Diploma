@@ -291,10 +291,37 @@ namespace AutoRent.Infrastructure.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
+                    b.Property<string>("NewAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NewCity")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("NewDriverLicenseIssueDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("NewDriverLicenseNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NewIdentityCardNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NewPhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RequestStatus")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RequestType")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Subject")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

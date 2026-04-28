@@ -35,20 +35,62 @@
                                     <td>@item.Name</td>
                                     <td>@item.Email</td>
                                     <td>@item.Subject</td>
-                                    <td style="max-width: 280px; white-space: pre-wrap;">@item.Message</td>
+                                    <td style="max-width: 320px; white-space: pre-wrap;">@item.Message</td>
                                     <td>@item.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+
                                     <td>
-                                        @if (item.IsRead)
+                                        @if (item.RequestType == "ProfileChange")
                                         {
-                                            <span class="badge bg-success">Прочетено</span>
+                                            if (item.RequestStatus == "Pending")
+                                            {
+                                                <span class="badge bg-warning text-dark">В изчакване</span>
+                                            }
+                                            else if (item.RequestStatus == "Approved")
+                                            {
+                                                <span class="badge bg-success">Одобрена</span>
+                                            }
+                                            else if (item.RequestStatus == "Rejected")
+                                            {
+                                                <span class="badge bg-secondary">Отказана</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-info">Заявка</span>
+                                            }
                                         }
                                         else
                                         {
-                                            <span class="badge bg-danger">Непрочетено</span>
+                                            if (item.IsRead)
+                                            {
+                                                <span class="badge bg-success">Прочетено</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-danger">Непрочетено</span>
+                                            }
                                         }
                                     </td>
+
                                     <td>
-                                        @if (!item.IsRead)
+                                        @if (item.RequestType == "ProfileChange" && item.RequestStatus == "Pending")
+                                        {
+                                            <form asp-action="ApproveProfileChange" asp-route-id="@item.Id" method="post" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-sm btn-success mb-1"
+                                                        onclick="return confirm('Сигурни ли сте, че искате да одобрите тази промяна?');">
+                                                    <i class="bi bi-check-circle"></i> Одобри
+                                                </button>
+                                            </form>
+
+                                            <form asp-action="RejectProfileChange" asp-route-id="@item.Id" method="post" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-sm btn-warning mb-1"
+                                                        onclick="return confirm('Сигурни ли сте, че искате да откажете тази промяна?');">
+                                                    <i class="bi bi-x-circle"></i> Откажи
+                                                </button>
+                                            </form>
+                                        }
+                                        else if (!item.IsRead)
                                         {
                                             <form asp-action="MarkMessageAsRead" asp-route-id="@item.Id" method="post" class="d-inline">
                                                 @Html.AntiForgeryToken()

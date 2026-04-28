@@ -135,7 +135,17 @@ namespace AutoRent.Web.Controllers
             return View(viewModel);
         }
 
-       
+        public async Task<IActionResult> Details(int id)
+        {
+            var car = await _carService.GetCarByIdAsync(id);
+
+            if (car == null)
+            {
+                return NotFound();
+            }
+
+            return View(car);
+        }
 
         [Authorize]
         public async Task<IActionResult> Rent(int id, DateTime? startDate, DateTime? endDate)

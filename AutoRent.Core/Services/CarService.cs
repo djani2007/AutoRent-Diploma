@@ -1,6 +1,7 @@
 using AutoRent.Core.DTOs;
 using AutoRent.Core.Entities;
 using AutoRent.Core.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace AutoRent.Core.Services
 {
@@ -83,6 +84,7 @@ namespace AutoRent.Core.Services
         public async Task DeleteCarAsync(int id)
         {
             var car = await _carRepository.GetByIdAsync(id);
+
             if (car == null)
                 throw new KeyNotFoundException($"Car with id {id} not found");
 

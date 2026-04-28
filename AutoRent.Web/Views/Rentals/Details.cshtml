@@ -10,19 +10,38 @@
                 <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                     <h4 class="mb-0"><i class="bi bi-calendar-check"></i> Резервация #@Model.Id</h4>
                     @switch (Model.Status)
+
                     {
+
                         case "Pending":
                             <span class="badge bg-warning fs-6">В изчакване</span>
                             break;
+
+
+
                         case "Active":
-                            <span class="badge bg-success fs-6">Активен</span>
+                            if (Model.EndDate.Date < DateTime.Today)
+                            {
+                                <span class="badge bg-secondary fs-6">Изтекъл</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success fs-6">Активен</span>
+                            }
                             break;
+
+
+
                         case "Completed":
                             <span class="badge bg-secondary fs-6">Завършен</span>
                             break;
+
+
+
                         case "Cancelled":
                             <span class="badge bg-danger fs-6">Отказан</span>
                             break;
+
                     }
                 </div>
                 <div class="card-body">
@@ -55,8 +74,8 @@
                         </div>
                         <div class="col-md-6">
                             <h5>Финансова информация</h5>
-                            <p><strong>Цена на ден:</strong> @Model.Car.PricePerDay.ToString("N2") лв.</p>
-                            <p class="h4 text-primary"><strong>Общо:</strong> @Model.TotalPrice.ToString("N2") лв.</p>
+                            <p><strong>Цена на ден:</strong> @Model.Car.PricePerDay.ToString("N2") €</p>
+                            <p class="h4 text-primary"><strong>Общо:</strong> @Model.TotalPrice.ToString("N2") €</p>
                         </div>
                     </div>
 

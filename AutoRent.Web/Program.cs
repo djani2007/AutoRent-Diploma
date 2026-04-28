@@ -5,9 +5,7 @@ using AutoRent.Infrastructure.Data;
 using AutoRent.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using AutoRent.Core.Interfaces;
-using AutoRent.Core.Services;
-using AutoRent.Infrastructure.Repositories;
+
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -35,8 +33,8 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.LoginPath = "/Identity/Account/Login";
-    options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+    options.LoginPath = "/Account/Login";
+    options.AccessDeniedPath = "/Account/AccessDenied";
 });
 
 builder.Services.AddScoped<ICarRepository, CarRepository>();
