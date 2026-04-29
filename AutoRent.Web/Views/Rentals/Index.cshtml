@@ -42,7 +42,7 @@
                             <td>@rental.StartDate.ToString("dd.MM.yyyy")</td>
                             <td>@rental.EndDate.ToString("dd.MM.yyyy")</td>
                             <td>@rental.TotalDays</td>
-                            <td>@rental.TotalPrice.ToString("N2") лв.</td>
+                            <td>@rental.TotalPrice.ToString("N2") €</td>
                             <td>
                                 @switch (rental.Status)
                                 {
@@ -50,7 +50,19 @@
                                         <span class="badge bg-warning">В изчакване</span>
                                         break;
                                     case "Active":
-                                        <span class="badge bg-success">Активен</span>
+
+                                        if (rental.EndDate.Date < DateTime.Today)
+
+                                        {
+                                            <span class="badge bg-secondary">Изтекъл</span>
+                                        }
+
+                                        else
+
+                                        {
+                                            <span class="badge bg-success">Активен</span>
+                                        }
+
                                         break;
                                     case "Completed":
                                         <span class="badge bg-secondary">Завършен</span>

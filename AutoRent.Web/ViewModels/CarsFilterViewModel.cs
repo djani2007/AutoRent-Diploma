@@ -21,5 +21,10 @@ namespace AutoRent.Web.ViewModels
         public List<string> AvailableTransmissionTypes { get; set; } = new();
         public List<string> AvailableFuelTypes { get; set; } = new();
         public List<int> AvailableSeats { get; set; } = new();
+
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+
+        public bool HasPeriod => StartDate.HasValue && EndDate.HasValue;
     }
 }

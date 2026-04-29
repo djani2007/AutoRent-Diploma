@@ -7,6 +7,8 @@ namespace AutoRent.Core.Interfaces
         Task<IEnumerable<Car>> GetAvailableCarsAsync();
         Task<IEnumerable<Car>> GetCarsByBrandAsync(string brand);
         Task<IEnumerable<Car>> GetCarsByBodyTypeAsync(string bodyType);
+        Task<IEnumerable<Car>> GetAvailableCarsAsync(DateTime startDate, DateTime endDate);
+        Task<bool> IsCarAvailableAsync(int carId, DateTime startDate, DateTime endDate);
 
         Task<IEnumerable<Car>> SearchCarsAsync(
             string? brand,
@@ -17,6 +19,7 @@ namespace AutoRent.Core.Interfaces
             decimal? maxPrice,
             int? seats);
 
-        Task<bool> IsCarAvailableAsync(int carId, DateTime startDate, DateTime endDate);
+      
+        
     }
 }

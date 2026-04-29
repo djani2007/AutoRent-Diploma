@@ -9,6 +9,27 @@
     <div class="card mb-4 shadow-sm">
         <div class="card-body">
             <form asp-action="Index" method="get" class="row g-3">
+              
+
+                    <div class="col-md-3">
+                        <label class="form-label">Начална дата</label>
+                        <input type="date"
+                               name="startDate"
+                               class="form-control"
+                               value="@Model.StartDate?.ToString("yyyy-MM-dd")"
+                               min="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">Крайна дата</label>
+                        <input type="date"
+                               name="endDate"
+                               class="form-control"
+                               value="@Model.EndDate?.ToString("yyyy-MM-dd")"
+                               min="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                    </div>
+
+                   
                 <div class="col-md-3">
                     <label class="form-label">Марка</label>
                     <select name="brand" class="form-select">
@@ -196,7 +217,7 @@
                             </p>
 
                             <p class="card-text">
-                                <span class="h4 text-primary">@car.PricePerDay.ToString("N2") лв.</span>
+                                <span class="h4 text-primary">@car.PricePerDay.ToString("N2") €</span>
                                 <small class="text-muted">/ ден</small>
                             </p>
                         </div>
@@ -210,8 +231,13 @@
                                 @if (car.IsAvailable)
 
                                 {
-                                    <a asp-controller="Cars" asp-action="Rent" asp-route-id="@car.Id" class="btn btn-primary">
-                                        <i class="bi bi-calendar-plus"></i> Наеми сега
+                                    <a asp-controller="Cars"
+                                       asp-action="Rent"
+                                       asp-route-id="@car.Id"
+                                       asp-route-startDate="@Model.StartDate?.ToString("yyyy-MM-dd")"
+                                       asp-route-endDate="@Model.EndDate?.ToString("yyyy-MM-dd")"
+                                       class="btn btn-primary">
+                                        Ангажирай за периода
                                     </a>
                                 }
 

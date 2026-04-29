@@ -3,6 +3,7 @@ using AutoRent.Web.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using AutoRent.Infrastructure.Data;
 
 namespace AutoRent.Web.Controllers
 {
@@ -10,11 +11,13 @@ namespace AutoRent.Web.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly AppDbContext _context;
 
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public AccountController(UserManager<ApplicationUser> userManager,SignInManager<ApplicationUser> signInManager,AppDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _context = context;
         }
 
         public IActionResult Login(string? returnUrl = null)
@@ -157,7 +160,6 @@ namespace AutoRent.Web.Controllers
 
             return View(viewModel);
         }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Profile(ProfileViewModel model)
@@ -166,21 +168,98 @@ namespace AutoRent.Web.Controllers
             if (user == null)
                 return RedirectToAction("Login");
 
+            model.Id = user.Id;
+            model.Email = user.Email ?? string.Empty;
+            model.FirstName = user.FirstName;
+            model.LastName = user.LastName;
+            model.EGN = user.EGN;
+            model.BirthDate = user.BirthDate;
+            model.CreatedAt = user.CreatedAt;
+
             if (!ModelState.IsValid)
                 return View(model);
 
-            user.FirstName = model.FirstName;
-            user.LastName = model.LastName;
-            user.PhoneNumber = model.PhoneNumber;
-            user.Address = model.Address;
-            user.City = model.City;
-            user.DriverLicenseNumber = model.DriverLicenseNumber;
-            user.EGN = model.EGN;
-            user.BirthDate = model.BirthDate;
-            user.IdentityCardNumber = model.IdentityCardNumber;
-            user.DriverLicenseIssueDate = model.DriverLicenseIssueDate;
+            var hasChanges =
+                user.PhoneNumber != model.PhoneNumber ||
+                user.Address != model.Address ||
+                user.City != model.City ||
+                user.IdentityCardNumber != model.IdentityCardNumber ||
+                user.DriverLicenseNumber != model.DriverLicenseNumber ||
+                user.DriverLicenseIssueDate != model.DriverLicenseIssueDate;
 
-            var result = await _userManager.UpdateAsync(user);
+            if (!hasChanges)
+            {
+                TempData["Success"] = "Няма направени промени.";
+                return RedirectToAction("Profile");
+            }
+
+            var messageText =
+                $"Потребителят {user.FirstName} {user.LastName} поиска промяна на профилни данни.\n\n" +
+                $"Телефон: {user.PhoneNumber} → {model.PhoneNumber}\n" +
+                $"Адрес: {user.Address} → {model.Address}\n" +
+                $"Град: {user.City} → {model.City}\n" +
+                $"Лична карта: {user.IdentityCardNumber} → {model.IdentityCardNumber}\n" +
+                $"Шофьорска книжка: {user.DriverLicenseNumber} → {model.DriverLicenseNumber}\n" +
+                $"Дата на издаване на книжка: {user.DriverLicenseIssueDate:dd.MM.yyyy} → {model.DriverLicenseIssueDate:dd.MM.yyyy}";
+
+            var request = new ContactMessage
+            {
+                Name = user.FullName,
+                Email = user.Email ?? string.Empty,
+                Subject = "Заявка за промяна на профил",
+                Message = messageText,
+                IsRead = false,
+                CreatedAt = DateTime.UtcNow,
+
+                RequestType = "ProfileChange",
+                RequestStatus = "Pending",
+                UserId = user.Id,
+
+                NewPhoneNumber = model.PhoneNumber,
+                NewAddress = model.Address,
+                NewCity = model.City,
+                NewIdentityCardNumber = model.IdentityCardNumber,
+                NewDriverLicenseNumber = model.DriverLicenseNumber,
+                NewDriverLicenseIssueDate = model.DriverLicenseIssueDate
+            };
+
+            _context.ContactMessages.Add(request);
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Заявката за промяна беше изпратена към администратор за одобрение.";
+            return RedirectToAction("Profile");
+        }
+
+        [HttpGet]
+        public IActionResult ChangePassword()
+        {
+            if (User.Identity?.IsAuthenticated != true)
+                return RedirectToAction("Login");
+
+            return View(new ChangePasswordViewModel());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (User.Identity?.IsAuthenticated != true)
+                return RedirectToAction("Login");
+
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user == null)
+                return RedirectToAction("Login");
+
+            var result = await _userManager.ChangePasswordAsync(
+                user,
+                model.CurrentPassword,
+                model.NewPassword
+            );
+
             if (!result.Succeeded)
             {
                 foreach (var error in result.Errors)
@@ -189,10 +268,12 @@ namespace AutoRent.Web.Controllers
                 return View(model);
             }
 
-            await SetSessionAsync(user);
-            TempData["Success"] = "Профилът беше обновен успешно.";
+            await _signInManager.RefreshSignInAsync(user);
+
+            TempData["Success"] = "Паролата беше сменена успешно.";
             return RedirectToAction("Profile");
         }
+
 
         private async Task SetSessionAsync(ApplicationUser user)
         {

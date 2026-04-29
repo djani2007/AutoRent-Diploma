@@ -10,6 +10,9 @@ using System.Globalization;
 using System.Linq;
 using System.Globalization;
 using AutoRent.Infrastructure.Data;
+using Microsoft.AspNetCore.Identity;
+using AutoRent.Core.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace AutoRent.Web.Controllers
 {
@@ -300,15 +303,36 @@ namespace AutoRent.Web.Controllers
 
 
 
-       
 
 
+
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteCar(int id)
         {
+            var hasRentals = await _context.Rentals.AnyAsync(r => r.CarId == id);
+
+            if (hasRentals)
+            {
+                var car = await _context.Cars.FindAsync(id);
+
+                if (car == null)
+                {
+                    TempData["Error"] = "Автомобилът не беше намерен.";
+                    return RedirectToAction(nameof(Cars));
+                }
+
+                car.IsAvailable = false;
+                await _context.SaveChangesAsync();
+
+                TempData["Success"] = "Автомобилът има направени наеми и не може да бъде изтрит. Маркиран е като недостъпен.";
+                return RedirectToAction(nameof(Cars));
+            }
+
             await _carService.DeleteCarAsync(id);
-            TempData["Success"] = "Car deleted successfully!";
+
+            TempData["Success"] = "Автомобилът беше изтрит успешно!";
             return RedirectToAction(nameof(Cars));
         }
 
@@ -458,5 +482,134 @@ namespace AutoRent.Web.Controllers
             TempData["Success"] = "Съобщението беше изтрито.";
             return RedirectToAction(nameof(Messages));
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ApproveProfileChange(int id)
+        {
+            var request = await _context.ContactMessages.FindAsync(id);
+
+            if (request == null)
+                return NotFound();
+
+            if (request.RequestType != "ProfileChange" || request.RequestStatus != "Pending")
+            {
+                TempData["Error"] = "Тази заявка не може да бъде одобрена.";
+                return RedirectToAction(nameof(Messages));
+            }
+
+            var user = await _userManager.FindByIdAsync(request.UserId ?? string.Empty);
+
+            if (user == null)
+            {
+                TempData["Error"] = "Потребителят не беше намерен.";
+                return RedirectToAction(nameof(Messages));
+            }
+
+            user.PhoneNumber = request.NewPhoneNumber;
+            user.Address = request.NewAddress ?? string.Empty;
+            user.City = request.NewCity ?? string.Empty;
+            user.IdentityCardNumber = request.NewIdentityCardNumber ?? string.Empty;
+            user.DriverLicenseNumber = request.NewDriverLicenseNumber ?? string.Empty;
+
+            if (request.NewDriverLicenseIssueDate.HasValue)
+            {
+                user.DriverLicenseIssueDate = request.NewDriverLicenseIssueDate.Value;
+            }
+
+            var result = await _userManager.UpdateAsync(user);
+
+            if (!result.Succeeded)
+            {
+                TempData["Error"] = "Възникна грешка при одобряване на заявката.";
+                return RedirectToAction(nameof(Messages));
+            }
+
+            request.RequestStatus = "Approved";
+            request.IsRead = true;
+
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Заявката беше одобрена и профилът беше обновен.";
+            return RedirectToAction(nameof(Messages));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RejectProfileChange(int id)
+        {
+            var request = await _context.ContactMessages.FindAsync(id);
+
+            if (request == null)
+                return NotFound();
+
+            if (request.RequestType != "ProfileChange" || request.RequestStatus != "Pending")
+            {
+                TempData["Error"] = "Тази заявка не може да бъде отказана.";
+                return RedirectToAction(nameof(Messages));
+            }
+
+            request.RequestStatus = "Rejected";
+            request.IsRead = true;
+
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Заявката беше отказана.";
+            return RedirectToAction(nameof(Messages));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ChangeUserPassword(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user == null)
+            {
+                TempData["Error"] = "Потребителят не беше намерен.";
+                return RedirectToAction(nameof(Users));
+            }
+
+            var model = new AdminChangePasswordViewModel
+            {
+                UserId = user.Id,
+                Email = user.Email ?? string.Empty,
+                FullName = user.FullName
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangeUserPassword(AdminChangePasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var user = await _userManager.FindByIdAsync(model.UserId);
+
+            if (user == null)
+            {
+                TempData["Error"] = "Потребителят не беше намерен.";
+                return RedirectToAction(nameof(Users));
+            }
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var result = await _userManager.ResetPasswordAsync(user, token, model.NewPassword);
+
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                    ModelState.AddModelError("", error.Description);
+
+                model.Email = user.Email ?? string.Empty;
+                model.FullName = user.FullName;
+                return View(model);
+            }
+
+            TempData["Success"] = "Паролата на потребителя беше сменена успешно.";
+            return RedirectToAction(nameof(Users));
+        }
+
     }
 }

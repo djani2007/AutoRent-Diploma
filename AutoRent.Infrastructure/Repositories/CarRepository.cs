@@ -16,6 +16,24 @@ namespace AutoRent.Infrastructure.Repositories
             return await _dbSet.Where(c => c.IsAvailable).ToListAsync();
         }
 
+        public async Task<IEnumerable<Car>> GetAvailableCarsAsync(DateTime startDate, DateTime endDate)
+        {
+            var start = startDate.Date;
+            var end = endDate.Date;
+
+            return await _dbSet
+                .Where(c => c.IsAvailable)
+                .Where(c => !_context.Rentals.Any(r =>
+                    r.CarId == c.Id &&
+                    r.Status != "Cancelled" &&
+                    r.Status != "Completed" &&
+                    start <= r.EndDate.Date &&
+                    end >= r.StartDate.Date))
+                .OrderBy(c => c.Brand)
+                .ThenBy(c => c.Model)
+                .ToListAsync();
+        }
+
         public async Task<IEnumerable<Car>> GetCarsByBrandAsync(string brand)
         {
             return await _dbSet.Where(c => c.Brand.ToLower() == brand.ToLower()).ToListAsync();
@@ -82,17 +100,22 @@ namespace AutoRent.Infrastructure.Repositories
         public async Task<bool> IsCarAvailableAsync(int carId, DateTime startDate, DateTime endDate)
         {
             var car = await _dbSet.FindAsync(carId);
-            if (car == null || !car.IsAvailable)
-                return false;
 
-            var hasOverlappingRentals = await _context.Rentals
-                .AnyAsync(r => r.CarId == carId &&
-                               r.Status != "Cancelled" &&
-                               r.Status != "Completed" &&
-                               startDate.Date <= r.EndDate.Date &&
-                               endDate.Date >= r.StartDate.Date);
+            if (car == null || !car.IsAvailable)
+            {
+                return false;
+            }
+
+            var hasOverlappingRentals = await _context.Rentals.AnyAsync(r =>
+                r.CarId == carId &&
+                r.Status != "Cancelled" &&
+                r.Status != "Completed" &&
+                startDate.Date <= r.EndDate.Date &&
+                endDate.Date >= r.StartDate.Date);
 
             return !hasOverlappingRentals;
         }
+
+
     }
 }

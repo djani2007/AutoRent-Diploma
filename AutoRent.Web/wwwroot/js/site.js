@@ -51,7 +51,7 @@ function calculateRentalPrice(pricePerDay) {
 
         if (days > 0) {
             var totalPrice = days * pricePerDay;
-            document.getElementById('totalPrice').textContent = totalPrice.toFixed(2) + ' лв.';
+            document.getElementById('totalPrice').textContent = totalPrice.toFixed(2) + ' €';
             document.getElementById('totalDays').textContent = days + ' дни';
         }
     }

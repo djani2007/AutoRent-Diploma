@@ -26,5 +26,17 @@ namespace AutoRent.Core.Entities
         public bool IsRead { get; set; } = false;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        // За заявки за промяна на профил
+        public string? RequestType { get; set; }
+        public string? RequestStatus { get; set; }
+        public string? UserId { get; set; }
+
+        public string? NewPhoneNumber { get; set; }
+        public string? NewAddress { get; set; }
+        public string? NewCity { get; set; }
+        public string? NewIdentityCardNumber { get; set; }
+        public string? NewDriverLicenseNumber { get; set; }
+        public DateTime? NewDriverLicenseIssueDate { get; set; }
     }
 }

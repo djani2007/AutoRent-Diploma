@@ -123,7 +123,7 @@
             <div class="card text-center shadow-sm h-100">
                 <div class="card-body">
                     <h5 class="card-title">Общо похарчено</h5>
-                    <p class="display-6 mb-0">@Model.TotalSpent.ToString("F2") лв.</p>
+                    <p class="display-6 mb-0">@Model.TotalSpent.ToString("F2") €</p>
                 </div>
             </div>
         </div>
@@ -168,7 +168,7 @@
                                     <td>@rental.StartDate.ToString("dd.MM.yyyy")</td>
                                     <td>@rental.EndDate.ToString("dd.MM.yyyy")</td>
                                     <td>@rental.TotalDays</td>
-                                    <td>@rental.TotalPrice.ToString("F2") лв.</td>
+                                    <td>@rental.TotalPrice.ToString("F2") €</td>
                                     <td>
                                         @if (rental.Status == "Active")
                                         {

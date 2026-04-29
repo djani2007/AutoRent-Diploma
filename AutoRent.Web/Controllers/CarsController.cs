@@ -20,11 +20,25 @@ namespace AutoRent.Web.Controllers
             _userManager = userManager;
         }
 
-        public async Task<IActionResult> Index( string? brand, string? bodyType, string? transmissionType, string? fuelType, decimal? minPrice, decimal? maxPrice, int? seats)
+        public async Task<IActionResult> Index(string? brand,string? bodyType,string? transmissionType,string? fuelType,decimal? minPrice,decimal? maxPrice,int? seats, DateTime? startDate, DateTime? endDate)
         {
-            var cars = (await _carService.GetAvailableCarsAsync()).ToList();
+            if (startDate.HasValue && startDate.Value.Date < DateTime.Today)
+            {
+                ModelState.AddModelError(nameof(startDate), "Началната дата не може да бъде в миналото.");
+            }
+
+            if (startDate.HasValue && endDate.HasValue && endDate.Value.Date < startDate.Value.Date)
+            {
+                ModelState.AddModelError(nameof(endDate), "Крайната дата не може да бъде преди началната дата.");
+            }
+
+            var cars = startDate.HasValue && endDate.HasValue && ModelState.IsValid
+                ? (await _carService.GetAvailableCarsAsync(startDate.Value.Date, endDate.Value.Date)).ToList()
+                : (await _carService.GetAvailableCarsAsync()).ToList();
 
             var filteredCars = cars.AsQueryable();
+
+           
 
             if (!string.IsNullOrWhiteSpace(brand))
             {
@@ -65,6 +79,7 @@ namespace AutoRent.Web.Controllers
                 filteredCars = filteredCars.Where(c => c.Seats == seats.Value);
             }
 
+
             var viewModel = new CarsFilterViewModel
             {
                 Cars = filteredCars
@@ -79,6 +94,8 @@ namespace AutoRent.Web.Controllers
                 MinPrice = minPrice,
                 MaxPrice = maxPrice,
                 Seats = seats,
+                StartDate = startDate,
+                EndDate = endDate,
 
                 AvailableBrands = cars
                     .Where(c => !string.IsNullOrWhiteSpace(c.Brand))
@@ -121,11 +138,17 @@ namespace AutoRent.Web.Controllers
         public async Task<IActionResult> Details(int id)
         {
             var car = await _carService.GetCarByIdAsync(id);
-            return car == null ? NotFound() : View(car);
+
+            if (car == null)
+            {
+                return NotFound();
+            }
+
+            return View(car);
         }
 
         [Authorize]
-        public async Task<IActionResult> Rent(int id)
+        public async Task<IActionResult> Rent(int id, DateTime? startDate, DateTime? endDate)
         {
             var userId = _userManager.GetUserId(User);
             if (string.IsNullOrEmpty(userId))
@@ -143,8 +166,8 @@ namespace AutoRent.Web.Controllers
                 CarName = car.FullName,
                 CarImage = car.ImageUrl,
                 PricePerDay = car.PricePerDay,
-                StartDate = DateTime.Today,
-                EndDate = DateTime.Today.AddDays(1)
+                StartDate = startDate ?? DateTime.Today,
+                EndDate = endDate ?? DateTime.Today.AddDays(1)
             });
         }
 

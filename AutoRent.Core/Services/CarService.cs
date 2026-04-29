@@ -1,6 +1,7 @@
 using AutoRent.Core.DTOs;
 using AutoRent.Core.Entities;
 using AutoRent.Core.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace AutoRent.Core.Services
 {
@@ -21,6 +22,10 @@ namespace AutoRent.Core.Services
         public async Task<IEnumerable<Car>> GetAvailableCarsAsync()
         {
             return await _carRepository.GetAvailableCarsAsync();
+        }
+        public async Task<IEnumerable<Car>> GetAvailableCarsAsync(DateTime startDate, DateTime endDate)
+        {
+            return await _carRepository.GetAvailableCarsAsync(startDate, endDate);
         }
 
         public async Task<Car?> GetCarByIdAsync(int id)
@@ -79,6 +84,7 @@ namespace AutoRent.Core.Services
         public async Task DeleteCarAsync(int id)
         {
             var car = await _carRepository.GetByIdAsync(id);
+
             if (car == null)
                 throw new KeyNotFoundException($"Car with id {id} not found");
 
@@ -104,6 +110,7 @@ namespace AutoRent.Core.Services
                 seats);
         }
 
+       
         public async Task<bool> IsCarAvailableAsync(int carId, DateTime startDate, DateTime endDate)
         {
             return await _carRepository.IsCarAvailableAsync(carId, startDate, endDate);
