@@ -40,6 +40,16 @@ AutoRent/
 - View car details (with features like paid vignette, unlimited mileage, VAT included)
 - Rent a car
 - View rental history
+  TEST ACCOUNT
+  
+ Name: Krasimir
+Email: krasimir@krasimir.com
+Password: krasimir123
+
+Name: Iliq
+Email: iliq@iliq.bg
+Password: iliqiliq0
+
 
 ### Admin Features
 - Car management (add, edit, delete)
